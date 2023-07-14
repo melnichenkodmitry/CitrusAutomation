@@ -1,2 +1,2 @@
 # CitrusAutomation
-Проект с автотестами API на Citrus.
+Проект с автотестами API на Citrus
