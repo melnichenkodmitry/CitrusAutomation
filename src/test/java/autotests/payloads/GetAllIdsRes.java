@@ -14,7 +14,7 @@ import java.util.List;
 @Setter //установка значения свойств
 @Getter //установка значения свойств
 @Accessors(fluent = true) //создание методов доступа (геттеров и сеттеров)
-@JsonInclude(JsonInclude.Include.NON_NULL) //игнорирование свойств объекта равных null
+//@JsonInclude(JsonInclude.Include.NON_NULL) //игнорирование свойств объекта равных null
 public class GetAllIdsRes {
     @JsonProperty
     private List<Integer> ids;
