@@ -68,19 +68,13 @@ public class DuckClient extends TestNGCitrusSpringSupport {
     }
 
     @Description("ValidateStringResponse")
-    public void validateStringResponse(TestCaseRunner runner, String color, String height, String material, String sound, String wingsState) {
+    public void validateStringResponse(TestCaseRunner runner, String response) {
         runner.$(http().client(duckService)
                 .receive() //получение ответа
                 .response(HttpStatus.OK) //проверка статуса ответа
                 .message()
                 .type(MessageType.JSON) //проверка заголовка ответа
-                .body("{\n" + //проверка тела ответа
-                        "  \"color\": \"" + color + "\",\n" +
-                        "  \"height\": " + height + ",\n" +
-                        "  \"material\": \"" + material + "\",\n" +
-                        "  \"sound\": \"" + sound + "\",\n" +
-                        "  \"wingsState\": \"" + wingsState + "\"\n" +
-                        "}"));
+                .body(response));
     }
 
     @Description("ValidateJSONResponse")
