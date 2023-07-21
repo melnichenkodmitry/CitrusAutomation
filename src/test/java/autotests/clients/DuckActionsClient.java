@@ -3,9 +3,14 @@ package autotests.clients;
 import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
+import com.consol.citrus.message.MessageType;
+import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Description;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
@@ -48,5 +53,35 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
                 .send()
                 .get("/api/duck/action/swim")
                 .queryParam("id", id));
+    }
+
+    @Description("ValidateStringResponse")
+    public void validateStringResponse(TestCaseRunner runner, String response) {
+        runner.$(http().client(duckService)
+                .receive() //получение ответа
+                .response(HttpStatus.OK) //проверка статуса ответа
+                .message()
+                .type(MessageType.JSON) //проверка заголовка ответа
+                .body(response)); //проверка тела ответа
+    }
+
+    @Description("ValidateJSONResponse")
+    public void validateJSONResponse(TestCaseRunner runner, String expectedPayload) {
+        runner.$(http().client(duckService)
+                .receive() //получение ответа
+                .response(HttpStatus.OK) //проверка статуса ответа
+                .message()
+                .type(MessageType.JSON) //проверка заголовка ответа
+                .body(new ClassPathResource(expectedPayload))); //проверка тела ответа
+    }
+
+    @Description("ValidatePayloadResponse")
+    public void validatePayloadResponse(TestCaseRunner runner, Object expectedPayload) {
+        runner.$(http().client(duckService)
+                .receive() //получение ответа
+                .response(HttpStatus.OK) //проверка статуса ответа
+                .message()
+                .type(MessageType.JSON) //проверка заголовка ответа
+                .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper()))); //проверка тела ответа
     }
 }
