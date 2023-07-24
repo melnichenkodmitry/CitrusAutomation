@@ -20,7 +20,7 @@ public class Duck {
     @JsonProperty
     private String color;
     @JsonProperty
-    private Integer height;
+    private Double height;
     @JsonProperty
     private String material;
     @JsonProperty

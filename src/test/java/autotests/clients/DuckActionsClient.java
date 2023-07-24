@@ -1,40 +1,27 @@
 package autotests.clients;
 
-import autotests.EndpointConfig;
+import autotests.BaseTest;
 import com.consol.citrus.TestCaseRunner;
-import com.consol.citrus.http.client.HttpClient;
-import com.consol.citrus.message.MessageType;
-import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
-import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.consol.citrus.validation.json.JsonPathMessageValidationContext;
 import org.springframework.context.annotation.Description;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ContextConfiguration;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-@ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckActionsClient extends TestNGCitrusSpringSupport {
+public class DuckActionsClient extends BaseTest {
 
-    @Autowired
-    protected HttpClient duckService;
+    /**
+     * Основные методы
+     */
 
     @Description("FlyEndpoint")
     public void duckFly(TestCaseRunner runner, String id) {
-        runner.$(http().client(duckService)
-                .send()
-                .get("/api/duck/action/fly")
-                .queryParam("id", id));
+        sendGetRequest(runner, duckService, "/api/duck/action/fly", "id", id);
     }
 
     @Description("PropertiesEndpoint")
     public void duckProperties(TestCaseRunner runner, String id) {
-        runner.$(http().client(duckService)
-                .send()
-                .get("/api/duck/action/properties")
-                .queryParam("id", id));
+        sendGetRequest(runner, duckService, "/api/duck/action/properties", "id", id);
     }
 
     @Description("QuackEndpoint")
@@ -49,39 +36,78 @@ public class DuckActionsClient extends TestNGCitrusSpringSupport {
 
     @Description("SwimEndpoint")
     public void duckSwim(TestCaseRunner runner, String id) {
-        runner.$(http().client(duckService)
-                .send()
-                .get("/api/duck/action/swim")
-                .queryParam("id", id));
+        sendGetRequest(runner, duckService, "/api/duck/action/swim", "id", id);
     }
+
+    /**
+     * Методы валидации
+     */
 
     @Description("ValidateStringResponse")
-    public void validateStringResponse(TestCaseRunner runner, String response) {
-        runner.$(http().client(duckService)
-                .receive() //получение ответа
-                .response(HttpStatus.OK) //проверка статуса ответа
-                .message()
-                .type(MessageType.JSON) //проверка заголовка ответа
-                .body(response)); //проверка тела ответа
+    public void validateStringResponse(TestCaseRunner runner, HttpStatus status, String response) {
+        validateStringResponse(runner, duckService, status, response);
     }
 
-    @Description("ValidateJSONResponse")
-    public void validateJSONResponse(TestCaseRunner runner, String expectedPayload) {
-        runner.$(http().client(duckService)
-                .receive() //получение ответа
-                .response(HttpStatus.OK) //проверка статуса ответа
-                .message()
-                .type(MessageType.JSON) //проверка заголовка ответа
-                .body(new ClassPathResource(expectedPayload))); //проверка тела ответа
+    @Description("ValidateJsonResponse")
+    public void validateJsonResponse(TestCaseRunner runner, HttpStatus status, String expectedPayload) {
+        validateJsonResponse(runner, duckService, status, expectedPayload);
     }
 
     @Description("ValidatePayloadResponse")
-    public void validatePayloadResponse(TestCaseRunner runner, Object expectedPayload) {
-        runner.$(http().client(duckService)
-                .receive() //получение ответа
-                .response(HttpStatus.OK) //проверка статуса ответа
-                .message()
-                .type(MessageType.JSON) //проверка заголовка ответа
-                .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper()))); //проверка тела ответа
+    public void validatePayloadResponse(TestCaseRunner runner, HttpStatus status, Object expectedPayload) {
+        validatePayloadResponse(runner, duckService, status, expectedPayload);
+    }
+
+    @Description("ValidateJsonPathResponse")
+    public void validateJsonPathResponse(TestCaseRunner runner, HttpStatus status, JsonPathMessageValidationContext.Builder body) {
+        validateJsonPathResponse(runner, duckService, status, body);
+    }
+
+    /**
+     * Методы create для создания уточек в БД
+     */
+
+    @Description("CreateEndpointString")
+    public void duckCreate(TestCaseRunner runner, String color, String height, String material, String sound, String wingsState) {
+        sendPostStringRequest(runner, duckService, "/api/duck/create", "{\n" +
+                "  \"color\": \"" + color + "\",\n" +
+                "  \"height\": " + height + ",\n" +
+                "  \"material\": \"" + material + "\",\n" +
+                "  \"sound\": \"" + sound + "\",\n" +
+                "  \"wingsState\": \"" + wingsState + "\"\n" +
+                "}");
+    }
+
+    @Description("CreateEndpointJSON")
+    public void duckCreate(TestCaseRunner runner, String payload) {
+        sendPostJsonRequest(runner, duckService, "/api/duck/create", payload);
+    }
+
+    @Description("CreateEndpointPayload")
+    public void duckCreate(TestCaseRunner runner, Object payload) {
+        sendPostPayloadRequest(runner, duckService, "/api/duck/create", payload);
+    }
+
+    /**
+     * Метод delete
+     */
+
+    @Description("DeleteFinallyEndpoint")
+    public void duckDeleteFinally(TestCaseRunner runner, String id) {
+        duckDeleteFinally(runner, duckService, "/api/duck/delete", "id", id);
+    }
+
+    /**
+     * Методы извлечения данных из ответа
+     */
+
+    @Description("ExtractId")
+    public void extractId(TestCaseRunner runner) {
+        extractId(runner, duckService, HttpStatus.OK);
+    }
+
+    @Description("ExtractDuck")
+    public void extractDuck(TestCaseRunner runner) {
+        extractDuck(runner, duckService, HttpStatus.OK);
     }
 }
