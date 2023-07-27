@@ -21,24 +21,24 @@ public class DuckActionsTest extends DuckActionsClient {
      * Тесты fly
      */
 
-    @Test(description = "Летающая уточка №1")
+    @Test(description = "Летающая уточка №1, проверка wingsState = ACTIVE")
     @CitrusTest
-    public void successFly1(@Optional @CitrusResource TestCaseRunner runner) {
+    public void successFly(@Optional @CitrusResource TestCaseRunner runner) {
         duckDeleteFinally(runner, "${id}");
-        duckCreate(runner, new Duck().color("yellow").height(0.01).material("rubber").sound("quack").wingsState("ACTIVE")); //Создание уточки
+        duckCreate(runner, new Duck().color("yellow").height(0.01).material("rubber").sound("quack").wingsState("ACTIVE"));
         extractId(runner); //ID из ответа
         duckFly(runner, "${id}"); //Запрос
         validateJsonPathResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "I'm flying"));
     }
 
-    @Test(description = "Летающая уточка №2")
+    @Test(description = "Летающая уточка №2, проверка wingsState = FIXED")
     @CitrusTest
-    public void successFly2(@Optional @CitrusResource TestCaseRunner runner) {
+    public void unsuccessFly(@Optional @CitrusResource TestCaseRunner runner) {
         duckDeleteFinally(runner, "${id}");
-        duckCreate(runner, new Duck().color("yellow").height(0.01).material("rubber").sound("quack").wingsState("FIXED")); //Создание уточки
-        extractId(runner); //ID из ответа
-        duckFly(runner, "${id}"); //Запрос
-        validatePayloadResponse(runner, HttpStatus.OK, new Message().message("I can't fly")); //Валидация
+        duckCreate(runner, new Duck().color("yellow").height(0.01).material("rubber").sound("quack").wingsState("FIXED"));
+        extractId(runner);
+        duckFly(runner, "${id}");
+        validatePayloadResponse(runner, HttpStatus.OK, new Message().message("I can't fly"));
     }
 
     /**
@@ -68,39 +68,29 @@ public class DuckActionsTest extends DuckActionsClient {
         duckCreate(runner, "DuckClient/createEndpoint3.json");
         extractId(runner);
         duckProperties(runner, "${id}");
-        validateJsonResponse(runner, HttpStatus.OK, "DuckClient/createEndpoint3.json");
+        validateJsonResponse(runner, HttpStatus.OK, "DuckClient/createEndpoint4.json");
     }
 
     @Test(description = "Получение полей уточки №3")
     @CitrusTest
     public void successProperties3(@Optional @CitrusResource TestCaseRunner runner) {
+        Duck duck = new Duck().color("yellow").height(0.01).material("rubber").sound("quack").wingsState("UNDEFINED");
         duckDeleteFinally(runner, "${id}");
-        duckCreate(runner, new Duck().color("yellow").height(0.01).material("rubber").sound("quack").wingsState("UNDEFINED"));
-        extractDuck(runner);
+        duckCreate(runner, duck);
+        extractId(runner);
         duckProperties(runner, "${id}");
-        validateStringResponse(runner, HttpStatus.OK, "{\n" +
-                "  \"color\": \"${color}\",\n" +
-                "  \"height\": ${height},\n" +
-                "  \"material\": \"${material}\",\n" +
-                "  \"sound\": \"${sound}\",\n" +
-                "  \"wingsState\": \"${wingsState}\"\n" +
-                "}");
+        validatePayloadResponse(runner, HttpStatus.OK, duck);
     }
 
     @Test(description = "Получение полей уточки №4")
     @CitrusTest
     public void successProperties4(@Optional @CitrusResource TestCaseRunner runner) {
+        Duck duck = new Duck().color("yellow").height(0.01).material("metal").sound("quack").wingsState("ACTIVE");
         duckDeleteFinally(runner, "${id}");
-        duckCreate(runner, new Duck().color("yellow").height(0.01).material("metal").sound("quack").wingsState("UNDEFINED"));
+        duckCreate(runner, duck);
         extractDuck(runner);
         duckProperties(runner, "${id}");
-        validateStringResponse(runner, HttpStatus.OK, "{\n" +
-                "  \"color\": \"${color}\",\n" +
-                "  \"height\": ${height},\n" +
-                "  \"material\": \"${material}\",\n" +
-                "  \"sound\": \"${sound}\",\n" +
-                "  \"wingsState\": \"${wingsState}\"\n" +
-                "}");
+        validatePayloadResponse(runner, HttpStatus.OK, duck);
     }
 
     /**
