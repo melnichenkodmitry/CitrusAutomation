@@ -1,0 +1,8 @@
+{
+  "id": "@ignore@",
+  "color": "yellow",
+  "height": 25.0,
+  "material": "metal",
+  "sound": "meow",
+  "wingsState": "ACTIVE"
+}
