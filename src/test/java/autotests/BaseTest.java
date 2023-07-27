@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
+import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
 import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
@@ -22,6 +25,9 @@ public class BaseTest extends TestNGCitrusSpringSupport {
 
     @Autowired
     protected HttpClient duckService;
+
+    @Autowired
+    protected SingleConnectionDataSource testDB;
 
     protected void sendGetRequest(TestCaseRunner runner, HttpClient URL, String path, String nameQuery, String valueQuery) {
         runner.$(http().client(URL)
@@ -59,29 +65,29 @@ public class BaseTest extends TestNGCitrusSpringSupport {
 
     protected void validateStringResponse(TestCaseRunner runner, HttpClient URL, HttpStatus status, String response) {
         runner.$(http().client(URL)
-                .receive() //получение ответа
-                .response(status) //проверка статуса ответа
+                .receive()
+                .response(status)
                 .message()
-                .type(MessageType.JSON) //проверка заголовка ответа
+                .type(MessageType.JSON)
                 .body(response));
     }
 
     protected void validateJsonResponse(TestCaseRunner runner, HttpClient URL, HttpStatus status, String expectedPayload) {
         runner.$(http().client(URL)
-                .receive() //получение ответа
-                .response(status) //проверка статуса ответа
+                .receive()
+                .response(status)
                 .message()
-                .type(MessageType.JSON) //проверка заголовка ответа
-                .body(new ClassPathResource(expectedPayload))); //проверка тела ответа
+                .type(MessageType.JSON)
+                .body(new ClassPathResource(expectedPayload)));
     }
 
     protected void validatePayloadResponse(TestCaseRunner runner, HttpClient URL, HttpStatus status, Object expectedPayload) {
         runner.$(http().client(URL)
-                .receive() //получение ответа
-                .response(status) //проверка статуса ответа
+                .receive()
+                .response(status)
                 .message()
-                .type(MessageType.JSON) //проверка заголовка ответа
-                .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper()))); //проверка тела ответа
+                .type(MessageType.JSON)
+                .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper())));
     }
 
     protected void validateJsonPathResponse(TestCaseRunner runner, HttpClient URL, HttpStatus status, JsonPathMessageValidationContext.Builder body) {
@@ -121,5 +127,25 @@ public class BaseTest extends TestNGCitrusSpringSupport {
                 .extract(fromBody().expression("$.material", "material"))
                 .extract(fromBody().expression("$.sound", "sound"))
                 .extract(fromBody().expression("$.wingsState", "wingsState")));
+    }
+
+    protected void databaseUpdate(TestCaseRunner runner, SingleConnectionDataSource dataSource, String sql) {
+        runner.$(sql(dataSource)
+                .statement(sql));
+    }
+
+    protected void databaseUpdateFinally(TestCaseRunner runner, SingleConnectionDataSource dataSource, String sql) {
+        runner.$(doFinally().actions(sql(dataSource)
+                .statement(sql)));
+    }
+
+    protected void validateDuckInDb(TestCaseRunner runner, SingleConnectionDataSource dataSource, String id, String color, String height, String material, String sound, String wingsState) {
+        runner.$(query(dataSource)
+                .statement("SELECT * FROM DUCK WHERE ID = " + id)
+                .validate("COLOR", color)
+                .validate("HEIGHT", height)
+                .validate("MATERIAL", material)
+                .validate("SOUND", sound)
+                .validate("WINGS_STATE", wingsState));
     }
 }

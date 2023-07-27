@@ -8,6 +8,7 @@ import com.consol.citrus.validation.json.JsonPathMessageValidationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
@@ -121,7 +122,7 @@ public class DuckClient extends BaseTest {
                 .response(HttpStatus.OK) //проверка статуса ответа
                 .message()
                 .type(MessageType.JSON) //проверка заголовка ответа
-                .extract(fromBody().expression("$.id", "id"))
+                .extract(fromBody().expression("$.id", "id")) //извлечение идентификатора
                 .body(new ObjectMappingPayloadBuilder(expectedPayload, new ObjectMapper()))); //проверка тела ответа
     }
 
@@ -144,4 +145,32 @@ public class DuckClient extends BaseTest {
         extractDuck(runner, duckService, HttpStatus.OK);
     }
 
+    /**
+     * Методы манипуляций с БД
+     */
+
+    @Description("duckCreateInDb")
+    public void duckCreateInDb(TestCaseRunner runner, String id, String color, Double height, String material, String sound, String wingsState) {
+        databaseUpdate(runner, testDB, "INSERT INTO DUCK VALUES (" + id +  ", '" + color + "', " + height + ", '" + material + "', '" + sound + "', '" + wingsState + "')");
+    }
+
+    @Description("duckDeleteFromDbFinally")
+    public void duckDeleteFromDbFinally(TestCaseRunner runner, String id) {
+        databaseUpdateFinally(runner, testDB, "DELETE FROM DUCK WHERE ID = " + id);
+    }
+
+    @Description("duckDeleteFromDbFinally")
+    public void duckDeleteFromDb(TestCaseRunner runner, String id) {
+        databaseUpdate(runner, testDB, "DELETE FROM DUCK WHERE ID = " + id);
+    }
+
+    @Description("ValidateDuckInDb")
+    public void validateDuckInDb(TestCaseRunner runner, String id, String color, String height, String material, String sound, String wingsState) {
+        validateDuckInDb(runner, testDB, id, color, height, material, sound, wingsState);
+    }
+
+    @Description("DbCleanup")
+    public void dbCleanup(TestCaseRunner runner) {
+        databaseUpdate(runner, testDB, "DELETE FROM DUCK");
+    }
 }
