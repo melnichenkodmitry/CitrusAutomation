@@ -110,4 +110,23 @@ public class DuckActionsClient extends BaseTest {
     public void extractDuck(TestCaseRunner runner) {
         extractDuck(runner, duckService, HttpStatus.OK);
     }
+
+    /**
+     * Методы манипуляций с БД
+     */
+
+    @Description("duckCreateInDb")
+    public void duckCreateInDb(TestCaseRunner runner, String id, String color, Double height, String material, String sound, String wingsState) {
+        databaseUpdate(runner, testDB, "INSERT INTO DUCK VALUES (" + id +  ", '" + color + "', " + height + ", '" + material + "', '" + sound + "', '" + wingsState + "')");
+    }
+
+    @Description("duckDeleteFromDbFinally")
+    public void duckDeleteFromDbFinally(TestCaseRunner runner, String id) {
+        databaseUpdateFinally(runner, testDB, "DELETE FROM DUCK WHERE ID = " + id);
+    }
+
+    @Description("duckDeleteFromDbFinally")
+    public void duckDeleteFromDb(TestCaseRunner runner, String id) {
+        databaseUpdate(runner, testDB, "DELETE FROM DUCK WHERE ID = " + id);
+    }
 }
