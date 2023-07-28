@@ -27,8 +27,9 @@ public class BaseTest extends TestNGCitrusSpringSupport {
     protected HttpClient duckService;
 
     @Autowired
-    protected SingleConnectionDataSource testDB;
+    protected SingleConnectionDataSource db;
 
+//    @Step("Отправка GET запроса")
     protected void sendGetRequest(TestCaseRunner runner, HttpClient URL, String path, String nameQuery, String valueQuery) {
         runner.$(http().client(URL)
                 .send()
@@ -36,6 +37,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
                 .queryParam(nameQuery, valueQuery));
     }
 
+//    @Step("Отправка POST запроса через строку")
     protected void sendPostStringRequest(TestCaseRunner runner, HttpClient URL, String path, String body) {
         runner.$(http().client(URL)
                 .send()
@@ -45,6 +47,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
                 .body(body));
     }
 
+//    @Step("Отправка POST запроса через payload")
     protected void sendPostPayloadRequest(TestCaseRunner runner, HttpClient URL, String path, Object payload) {
         runner.$(http().client(URL)
                 .send()
@@ -54,6 +57,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
                 .body(new ObjectMappingPayloadBuilder(payload, new ObjectMapper())));
     }
 
+//    @Step("Отправка POST запроса через JSON")
     protected void sendPostJsonRequest(TestCaseRunner runner, HttpClient URL, String path, String payload) {
         runner.$(http().client(URL)
                 .send()
