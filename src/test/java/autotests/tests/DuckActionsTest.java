@@ -7,6 +7,10 @@ import autotests.payloads.Sound;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Flaky;
+import io.qameta.allure.Step;
 import org.springframework.http.HttpStatus;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
@@ -16,16 +20,20 @@ import java.util.Random;
 import static com.consol.citrus.validation.json.JsonPathMessageValidationContext.Builder.jsonPath;
 
 
+@Epic("Действия уточки")
 public class DuckActionsTest extends DuckActionsClient {
 
     /**
-     * РўРµСЃС‚С‹ fly
+     * Тесты fly
      */
 
-    @Test(description = "Р›РµС‚Р°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° в„–1, РїСЂРѕРІРµСЂРєР° wingsState = ACTIVE")
+    @Step("Летающая уточка")
+    @Description("wingsState = ACTIVE")
+    @Flaky
+    @Test(description = "Летающая уточка №1")
     @CitrusTest
     public void successFly1(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "yellow", 0.01, "rubber", "quack", "ACTIVE");
@@ -33,10 +41,13 @@ public class DuckActionsTest extends DuckActionsClient {
         validateJsonPathResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "I'm flying"));
     }
 
-    @Test(description = "Р›РµС‚Р°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° в„–2, РїСЂРѕРІРµСЂРєР° wingsState = FIXED")
+    @Step("Летающая уточка")
+    @Description("wingsState = FIXED")
+    @Flaky
+    @Test(description = "Летающая уточка №2")
     @CitrusTest
     public void successFly2(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "yellow", 0.01, "rubber", "quack", "FIXED");
@@ -45,13 +56,16 @@ public class DuckActionsTest extends DuckActionsClient {
     }
 
     /**
-     * РўРµСЃС‚С‹ properties
+     * Тесты properties
      */
 
-    @Test(description = "РџРѕР»СѓС‡РµРЅРёРµ РїРѕР»РµР№ СѓС‚РѕС‡РєРё в„–1")
+    @Step("Получение всех полей уточки")
+    @Description("wingsState = ACTIVE")
+    @Flaky
+    @Test(description = "Получение полей уточки №1")
     @CitrusTest
     public void successProperties1(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "yellow", 0.01, "rubber", "quack", "ACTIVE");
@@ -65,10 +79,13 @@ public class DuckActionsTest extends DuckActionsClient {
                 "}");
     }
 
-    @Test(description = "РџРѕР»СѓС‡РµРЅРёРµ РїРѕР»РµР№ СѓС‚РѕС‡РєРё в„–2")
+    @Step("Получение всех полей уточки")
+    @Description("wingsState = FIXED")
+    @Flaky
+    @Test(description = "Получение полей уточки №2")
     @CitrusTest
     public void successProperties2(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "yellow", 0.01, "rubber", "quack", "FIXED");
@@ -76,11 +93,14 @@ public class DuckActionsTest extends DuckActionsClient {
         validateJsonResponse(runner, HttpStatus.OK, "duckClient/createEndpoint3.json");
     }
 
-    @Test(description = "РџРѕР»СѓС‡РµРЅРёРµ РїРѕР»РµР№ СѓС‚РѕС‡РєРё в„–3")
+    @Step("Получение всех полей уточки")
+    @Description("wingsState = UNDEFINED")
+    @Flaky
+    @Test(description = "Получение полей уточки №3")
     @CitrusTest
     public void successProperties3(@Optional @CitrusResource TestCaseRunner runner) {
         Duck duck = new Duck().color("yellow").height(0.01).material("rubber").sound("quack").wingsState("UNDEFINED");
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", duck.color(), duck.height(), duck.material(), duck.sound(), duck.wingsState());
@@ -88,11 +108,14 @@ public class DuckActionsTest extends DuckActionsClient {
         validatePayloadResponse(runner, HttpStatus.OK, duck);
     }
 
-    @Test(description = "РџРѕР»СѓС‡РµРЅРёРµ РїРѕР»РµР№ СѓС‚РѕС‡РєРё в„–4")
+    @Step("Получение всех полей уточки")
+    @Description("material != rubber")
+    @Flaky
+    @Test(description = "Получение полей уточки №4")
     @CitrusTest
     public void successProperties4(@Optional @CitrusResource TestCaseRunner runner) {
         Duck duck = new Duck().color("yellow").height(0.01).material("metal").sound("quack").wingsState("ACTIVE");
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", duck.color(), duck.height(), duck.material(), duck.sound(), duck.wingsState());
@@ -101,13 +124,15 @@ public class DuckActionsTest extends DuckActionsClient {
     }
 
     /**
-     * РўРµСЃС‚С‹ quack
+     * Тесты quack
      */
 
-    @Test(description = "РљСЂСЏРєР°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° в„–1")
+    @Step("Крякающая уточка")
+    @Description("Количество повторов = 0, количество кряков = 2")
+    @Test(description = "Крякающая уточка №1")
     @CitrusTest
     public void successQuack1(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "rubber", "quack", "UNDEFINED");
@@ -117,10 +142,13 @@ public class DuckActionsTest extends DuckActionsClient {
                 "}");
     }
 
-    @Test(description = "РљСЂСЏРєР°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° в„–2")
+    @Step("Крякающая уточка")
+    @Description("Количество повторов = 3, количество кряков = 2")
+    @Flaky
+    @Test(description = "Крякающая уточка №2")
     @CitrusTest
     public void successQuack2(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "ACTIVE");
@@ -128,10 +156,13 @@ public class DuckActionsTest extends DuckActionsClient {
         validatePayloadResponse(runner, HttpStatus.OK, new Sound().sound("quack-quack, quack-quack, quack-quack"));
     }
 
-    @Test(description = "РљСЂСЏРєР°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° в„–3")
+    @Step("Крякающая уточка")
+    @Description("Количество повторов = 2, количество кряков = 3")
+    @Flaky
+    @Test(description = "Крякающая уточка №3")
     @CitrusTest
     public void successQuack3(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "UNDEFINED");
@@ -139,10 +170,13 @@ public class DuckActionsTest extends DuckActionsClient {
         validatePayloadResponse(runner, HttpStatus.OK, new Sound().sound("quack-quack-quack, quack-quack-quack"));
     }
 
-    @Test(description = "РљСЂСЏРєР°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° в„–4")
+    @Step("Крякающая уточка")
+    @Description("Количество повторов = 3, количество кряков = 3")
+    @Flaky
+    @Test(description = "Крякающая уточка №4")
     @CitrusTest
     public void successQuack4(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "ACTIVE");
@@ -150,10 +184,12 @@ public class DuckActionsTest extends DuckActionsClient {
         validatePayloadResponse(runner, HttpStatus.OK, new Sound().sound("quack-quack-quack, quack-quack-quack, quack-quack-quack"));
     }
 
-    @Test(description = "РљСЂСЏРєР°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° в„–5")
+    @Step("Крякающая уточка")
+    @Description("Количество повторов = 3, количество кряков = 0")
+    @Test(description = "Крякающая уточка №5")
     @CitrusTest
     public void successQuack5(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "ACTIVE");
@@ -162,17 +198,20 @@ public class DuckActionsTest extends DuckActionsClient {
     }
 
     /**
-     * РўРµСЃС‚С‹ swim
+     * Тесты swim
      */
 
-    @Test(description = "РџР»Р°РІР°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° 1")
-    @CitrusTest(name = "РџР»Р°РІР°СЋС‰Р°СЏ СѓС‚РѕС‡РєР° 1")
+    @Step("Плавающая уточка")
+    @Description("Позитивный тест с валидными значениями")
+    @Flaky
+    @Test(description = "Плавающая уточка №1")
+    @CitrusTest
     public void successSwim1(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.variable("id", new Random().nextInt(1, Integer.MAX_VALUE));
+        runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "green", 15.0, "rubber", "gagaga", "FIXED");
         duckSwim(runner, "${id}");
-        validatePayloadResponse(runner, HttpStatus.OK, new Message().message("IвЂ™m swimming"));
+        validatePayloadResponse(runner, HttpStatus.OK, new Message().message("I’m swimming"));
     }
 }

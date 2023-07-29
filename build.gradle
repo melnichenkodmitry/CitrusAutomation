@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'io.qameta.allure' version '2.11.2'
 }
 
 group 'org.example'
@@ -24,4 +25,9 @@ dependencies {
 
 test {
     useTestNG()
+//            {
+//                parallel = "classes"
+//                threadCount 3
+//                useDefaultListeners = true
+//            }
 }
