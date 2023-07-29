@@ -3,6 +3,6 @@
   "color": "violet",
   "height": 30.0,
   "material": "glass",
-  "sound": "fuf",
+  "sound": "@ignore@",
   "wingsState": "FIXED"
 }

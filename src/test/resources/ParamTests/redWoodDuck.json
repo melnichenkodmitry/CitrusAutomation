@@ -3,6 +3,6 @@
   "color": "red",
   "height": 10.0,
   "material": "wood",
-  "sound": "quack",
+  "sound": "@ignore@",
   "wingsState": "ACTIVE"
 }
