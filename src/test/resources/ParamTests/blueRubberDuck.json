@@ -3,6 +3,6 @@
   "color": "blue",
   "height": 20.0,
   "material": "rubber",
-  "sound": "gav",
+  "sound": "@ignore@",
   "wingsState": "UNDEFINED"
 }

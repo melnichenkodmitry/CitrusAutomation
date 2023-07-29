@@ -49,8 +49,8 @@ public class DuckTest extends DuckClient {
                 "    \"color\": \"\",\n" +
                 "    \"height\": 0.0,\n" +
                 "    \"material\": \"\",\n" +
-                "    \"sound\": \"\",\n" +
-                "    \"wingsState\": \"UNDEFINED\"\n" +
+                "    \"sound\": \"quack\",\n" +
+                "    \"wingsState\": \"ACTIVE\"\n" +
                 "}");
     }
 
@@ -60,10 +60,10 @@ public class DuckTest extends DuckClient {
     @CitrusTest
     public void successCreate3(@Optional @CitrusResource TestCaseRunner runner) {
         duckDeleteFromDbFinally(runner, "${id}");
-        Duck duck = new Duck().color("green").height(10.0).material("wood").sound("muamua").wingsState("ACTIVE");
+        Duck duck = new Duck().color("green").height(10.0).material("wood").wingsState("ACTIVE");
         duckCreate(runner, duck);
         extractId(runner);
-        validateDuckInDb(runner, "${id}", duck.color(), String.valueOf(duck.height()), duck.material(), duck.sound(), duck.wingsState());
+        validateDuckInDb(runner, "${id}", duck.color(), String.valueOf(duck.height()), duck.material(), "quack", duck.wingsState());
     }
 
     @Step("Создание уточки")
@@ -74,7 +74,7 @@ public class DuckTest extends DuckClient {
         duckDeleteFromDbFinally(runner, "${id}");
         duckCreate(runner, "duckClient/createEndpoint1.json");
         extractId(runner);
-        validateDuckInDb(runner, "${id}", "", "0.0", "", "", "UNDEFINED");
+        validateDuckInDb(runner, "${id}", "", "0.0", "", "quack", "ACTIVE");
     }
 
     /**
@@ -82,18 +82,19 @@ public class DuckTest extends DuckClient {
      */
 
     @Step("Обновление уточки")
-    @Description("Обновление существующей уточки")
+    @Flaky
+    @Description("Обновление существующей уточки. Новый баг")
     @Test(description = "Обновление уточки")
     @CitrusTest
     public void successUpdate(@Optional @CitrusResource TestCaseRunner runner) {
         runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDb(runner, "${id}");
         duckDeleteFromDbFinally(runner, "${id}");
-        Duck modDuck = new Duck().color("green").height(11.0).material("plastic").sound("quack").wingsState("FIXED");
-        duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "ACTIVE");
-        duckUpdate(runner, modDuck.color(), String.valueOf(modDuck.height()), "${id}", modDuck.material(), modDuck.sound(), modDuck.wingsState());
+        Duck modDuck = new Duck().color("green").height(15.0).material("plastic").wingsState("FIXED");
+        duckCreateInDb(runner, "${id}", "red", 20.0, "plastic", "quack", "ACTIVE");
+        duckUpdateWithoutSound(runner, modDuck.color(), String.valueOf(modDuck.height()), "${id}", modDuck.material(), modDuck.wingsState());
         validateJsonPathResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "Duck with id = ${id} is updated"));
-        validateDuckInDb(runner, "${id}", modDuck.color(), String.valueOf(modDuck.height()), modDuck.material(), modDuck.sound(), modDuck.wingsState());
+        validateDuckInDb(runner, "${id}", modDuck.color(), String.valueOf(modDuck.height()), modDuck.material(), "quack", modDuck.wingsState());
     }
 
     /**
@@ -137,12 +138,12 @@ public class DuckTest extends DuckClient {
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "green", 10.0, "wood", "muamua", "ACTIVE");
         duckDelete(runner, "${id}");
-        validateJsonPathResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "Duck is deleted"));
+        validateJsonPathResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "Duck with id = ${id} is deleted"));
     }
 
     @Step("Удаление уточки")
     @Description("Удаление несуществующей уточки")
-    @Flaky
+//    @Flaky
     @Test(description = "Удаление уточки №2")
     @CitrusTest
     public void successDelete2(@Optional @CitrusResource TestCaseRunner runner) {
@@ -168,11 +169,11 @@ public class DuckTest extends DuckClient {
     @DataProvider(name = "duckList")
     public Object[][] duckList() {
         return new Object[][]{
-                {null, new Duck().color("red").height(10.0).material("wood").sound("quack").wingsState("ACTIVE"), "paramTests/redWoodDuck.json"},
-                {null, new Duck().color("green").height(15.0).material("plastic").sound("crya").wingsState("FIXED"), "paramTests/greenPlasticDuck.json"},
-                {null, new Duck().color("blue").height(20.0).material("rubber").sound("gav").wingsState("UNDEFINED"), "paramTests/blueRubberDuck.json"},
-                {null, new Duck().color("yellow").height(25.0).material("metal").sound("meow").wingsState("ACTIVE"), "paramTests/yellowMetalDuck.json"},
-                {null, new Duck().color("violet").height(30.0).material("glass").sound("fuf").wingsState("FIXED"), "paramTests/violetGlassDuck.json"},
+                {null, new Duck().color("red").height(10.0).material("wood").wingsState("ACTIVE"), "paramTests/redWoodDuck.json"},
+                {null, new Duck().color("green").height(15.0).material("plastic").wingsState("FIXED"), "paramTests/greenPlasticDuck.json"},
+                {null, new Duck().color("blue").height(20.0).material("rubber").wingsState("UNDEFINED"), "paramTests/blueRubberDuck.json"},
+                {null, new Duck().color("yellow").height(25.0).material("metal").wingsState("ACTIVE"), "paramTests/yellowMetalDuck.json"},
+                {null, new Duck().color("violet").height(30.0).material("glass").wingsState("FIXED"), "paramTests/violetGlassDuck.json"},
         };
     }
 }

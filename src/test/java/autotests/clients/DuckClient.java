@@ -92,6 +92,19 @@ public class DuckClient extends BaseTest {
                 .queryParam("wingsState", wingsState));
     }
 
+    @Step("Обновление уточки")
+    @Description("UpdateEndpoint")
+    public void duckUpdateWithoutSound(TestCaseRunner runner, String color, String height, String id, String material, String wingsState) {
+        runner.$(http().client(duckService)
+                .send()
+                .put("/api/duck/update")
+                .queryParam("color", color)
+                .queryParam("height", height)
+                .queryParam("id", id)
+                .queryParam("material", material)
+                .queryParam("wingsState", wingsState));
+    }
+
     /**
      * Методы валидации
      */

@@ -2,6 +2,7 @@ package autotests.tests;
 
 import autotests.clients.DuckActionsClient;
 import autotests.payloads.Duck;
+import autotests.payloads.DuckSpeech;
 import autotests.payloads.Message;
 import autotests.payloads.Sound;
 import com.consol.citrus.TestCaseRunner;
@@ -29,7 +30,7 @@ public class DuckActionsTest extends DuckActionsClient {
 
     @Step("Летающая уточка")
     @Description("wingsState = ACTIVE")
-    @Flaky
+//    @Flaky
     @Test(description = "Летающая уточка №1")
     @CitrusTest
     public void successFly1(@Optional @CitrusResource TestCaseRunner runner) {
@@ -43,7 +44,7 @@ public class DuckActionsTest extends DuckActionsClient {
 
     @Step("Летающая уточка")
     @Description("wingsState = FIXED")
-    @Flaky
+//    @Flaky
     @Test(description = "Летающая уточка №2")
     @CitrusTest
     public void successFly2(@Optional @CitrusResource TestCaseRunner runner) {
@@ -61,7 +62,7 @@ public class DuckActionsTest extends DuckActionsClient {
 
     @Step("Получение всех полей уточки")
     @Description("wingsState = ACTIVE")
-    @Flaky
+//    @Flaky
     @Test(description = "Получение полей уточки №1")
     @CitrusTest
     public void successProperties1(@Optional @CitrusResource TestCaseRunner runner) {
@@ -81,7 +82,7 @@ public class DuckActionsTest extends DuckActionsClient {
 
     @Step("Получение всех полей уточки")
     @Description("wingsState = FIXED")
-    @Flaky
+//    @Flaky
     @Test(description = "Получение полей уточки №2")
     @CitrusTest
     public void successProperties2(@Optional @CitrusResource TestCaseRunner runner) {
@@ -95,7 +96,7 @@ public class DuckActionsTest extends DuckActionsClient {
 
     @Step("Получение всех полей уточки")
     @Description("wingsState = UNDEFINED")
-    @Flaky
+//    @Flaky
     @Test(description = "Получение полей уточки №3")
     @CitrusTest
     public void successProperties3(@Optional @CitrusResource TestCaseRunner runner) {
@@ -110,7 +111,7 @@ public class DuckActionsTest extends DuckActionsClient {
 
     @Step("Получение всех полей уточки")
     @Description("material != rubber")
-    @Flaky
+//    @Flaky
     @Test(description = "Получение полей уточки №4")
     @CitrusTest
     public void successProperties4(@Optional @CitrusResource TestCaseRunner runner) {
@@ -118,7 +119,7 @@ public class DuckActionsTest extends DuckActionsClient {
         runner.variable("id", new Random().nextInt(Integer.MAX_VALUE) + 1);
         duckDeleteFromDbFinally(runner, "${id}");
         duckDeleteFromDb(runner, "${id}");
-        duckCreateInDb(runner, "${id}", duck.color(), duck.height(), duck.material(), duck.sound(), duck.wingsState());
+        duckCreateInDb(runner, "${id}", duck.color(), duck.height(), duck.material(), "quack", duck.wingsState());
         duckProperties(runner, "${id}");
         validatePayloadResponse(runner, HttpStatus.OK, duck);
     }
@@ -138,13 +139,13 @@ public class DuckActionsTest extends DuckActionsClient {
         duckCreateInDb(runner, "${id}", "red", 10.0, "rubber", "quack", "UNDEFINED");
         duckQuack(runner, "${id}", "0", "2");
         validateStringResponse(runner, HttpStatus.OK, "{\n" +
-                "  \"sound\": \"\",\n" +
+                "  \"duckSpeech\": \"\",\n" +
                 "}");
     }
 
     @Step("Крякающая уточка")
     @Description("Количество повторов = 3, количество кряков = 2")
-    @Flaky
+//    @Flaky
     @Test(description = "Крякающая уточка №2")
     @CitrusTest
     public void successQuack2(@Optional @CitrusResource TestCaseRunner runner) {
@@ -153,12 +154,12 @@ public class DuckActionsTest extends DuckActionsClient {
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "ACTIVE");
         duckQuack(runner, "${id}", "3", "2");
-        validatePayloadResponse(runner, HttpStatus.OK, new Sound().sound("quack-quack, quack-quack, quack-quack"));
+        validatePayloadResponse(runner, HttpStatus.OK, new DuckSpeech().duckSpeech("quack-quack, quack-quack, quack-quack"));
     }
 
     @Step("Крякающая уточка")
     @Description("Количество повторов = 2, количество кряков = 3")
-    @Flaky
+//    @Flaky
     @Test(description = "Крякающая уточка №3")
     @CitrusTest
     public void successQuack3(@Optional @CitrusResource TestCaseRunner runner) {
@@ -167,12 +168,12 @@ public class DuckActionsTest extends DuckActionsClient {
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "UNDEFINED");
         duckQuack(runner, "${id}", "2", "3");
-        validatePayloadResponse(runner, HttpStatus.OK, new Sound().sound("quack-quack-quack, quack-quack-quack"));
+        validatePayloadResponse(runner, HttpStatus.OK, new DuckSpeech().duckSpeech("quack-quack-quack, quack-quack-quack"));
     }
 
     @Step("Крякающая уточка")
     @Description("Количество повторов = 3, количество кряков = 3")
-    @Flaky
+//    @Flaky
     @Test(description = "Крякающая уточка №4")
     @CitrusTest
     public void successQuack4(@Optional @CitrusResource TestCaseRunner runner) {
@@ -181,7 +182,7 @@ public class DuckActionsTest extends DuckActionsClient {
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "ACTIVE");
         duckQuack(runner, "${id}", "3", "3");
-        validatePayloadResponse(runner, HttpStatus.OK, new Sound().sound("quack-quack-quack, quack-quack-quack, quack-quack-quack"));
+        validatePayloadResponse(runner, HttpStatus.OK, new DuckSpeech().duckSpeech("quack-quack-quack, quack-quack-quack, quack-quack-quack"));
     }
 
     @Step("Крякающая уточка")
@@ -194,7 +195,7 @@ public class DuckActionsTest extends DuckActionsClient {
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "red", 10.0, "plastic", "quack", "ACTIVE");
         duckQuack(runner, "${id}", "3", "0");
-        validatePayloadResponse(runner, HttpStatus.OK, new Sound().sound(""));
+        validatePayloadResponse(runner, HttpStatus.OK, new DuckSpeech().duckSpeech(""));
     }
 
     /**
@@ -203,7 +204,7 @@ public class DuckActionsTest extends DuckActionsClient {
 
     @Step("Плавающая уточка")
     @Description("Позитивный тест с валидными значениями")
-    @Flaky
+//    @Flaky
     @Test(description = "Плавающая уточка №1")
     @CitrusTest
     public void successSwim1(@Optional @CitrusResource TestCaseRunner runner) {
@@ -212,6 +213,6 @@ public class DuckActionsTest extends DuckActionsClient {
         duckDeleteFromDb(runner, "${id}");
         duckCreateInDb(runner, "${id}", "green", 15.0, "rubber", "gagaga", "FIXED");
         duckSwim(runner, "${id}");
-        validatePayloadResponse(runner, HttpStatus.OK, new Message().message("I’m swimming"));
+        validatePayloadResponse(runner, HttpStatus.OK, new Message().message("I'm swimming"));
     }
 }

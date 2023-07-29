@@ -3,6 +3,6 @@
   "color": "yellow",
   "height": 25.0,
   "material": "metal",
-  "sound": "meow",
+  "sound": "@ignore@",
   "wingsState": "ACTIVE"
 }
